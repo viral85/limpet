@@ -74,33 +74,11 @@ public class DifferencePlotView extends CoreAnalysisView
 	@Override
 	public void display(List<ICollection> res)
 	{
-		// they're all the same type - check the first one
-		Iterator<ICollection> iter = res.iterator();
-
-		ICollection first = iter.next();
-
-		// sort out what type of data this is.
-		if (first.isQuantity())
-		{
-			if (aTests.allTemporal(res))
-			{
-				showTemporalQuantity(res);
-			}
-			else
-			{
-				showQuantity(res);
-			}
-			chart.setVisible(true);
-		}
-		else
-		{
-			chart.setVisible(false);
-		}
+		throw new UnsupportedOperationException("Difference view doesn't support being called in this way");
 	}
 
-	private void showQuantity(List<ICollection> res)
+	private void showQuantity(ICollection primary, List<ICollection> others)
 	{
-		Iterator<ICollection> iter = res.iterator();
 
 		// clear the graph
 		ISeries[] series = chart.getSeriesSet().getSeries();
@@ -110,54 +88,66 @@ public class DifferencePlotView extends CoreAnalysisView
 			chart.getSeriesSet().deleteSeries(iSeries.getId());
 		}
 
+
+		showThisQuantityCollection(primary);
+		
+		Iterator<ICollection> iter = others.iterator();
 		while (iter.hasNext())
 		{
 			ICollection coll = (ICollection) iter.next();
-			if (coll.isQuantity())
+			showThisQuantityCollection(coll);
+		}
+		
+		// ok, we also calculate the difference between the series
+		
+		
+		
+	}
+
+	private void showThisQuantityCollection(ICollection coll)
+	{
+		if (coll.isQuantity())
+		{
+			if (coll.size() > 1)
 			{
-				if (coll.size() > 1)
+				if (coll.size() < maxSize)
 				{
-					if (coll.size() < maxSize)
+					IQuantityCollection<?> thisQ = (IQuantityCollection<?>) coll;
+
+					String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
+					ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
+							.createSeries(SeriesType.LINE, seriesName);
+					newSeries.setSymbolType(PlotSymbolType.NONE);
+					newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+
+					double[] yData = new double[thisQ.size()];
+
+					Iterator<?> values = thisQ.getValues().iterator();
+					int ctr = 0;
+					while (values.hasNext())
 					{
-
-						IQuantityCollection<?> thisQ = (IQuantityCollection<?>) coll;
-
-						String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
-						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
-								.createSeries(SeriesType.LINE, seriesName);
-						newSeries.setSymbolType(PlotSymbolType.NONE);
-						newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
-
-						double[] yData = new double[thisQ.size()];
-
-						Iterator<?> values = thisQ.getValues().iterator();
-						int ctr = 0;
-						while (values.hasNext())
-						{
-							Quantity<?> tQ = (Quantity<?>) values.next();
-							yData[ctr++] = tQ.getValue().doubleValue();
-						}
-
-						// newSeries.setXSeries(xData);
-						newSeries.setYSeries(yData);
-
-						chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
-
-						// adjust the axis range
-						chart.getAxisSet().adjustRange();
-						IAxis xAxis = chart.getAxisSet().getXAxis(0);
-						xAxis.enableCategory(false);
-
-						chart.redraw();
+						Quantity<?> tQ = (Quantity<?>) values.next();
+						yData[ctr++] = tQ.getValue().doubleValue();
 					}
+
+					// newSeries.setXSeries(xData);
+					newSeries.setYSeries(yData);
+
+					chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
+
+					// adjust the axis range
+					chart.getAxisSet().adjustRange();
+					IAxis xAxis = chart.getAxisSet().getXAxis(0);
+					xAxis.enableCategory(false);
+
+					chart.redraw();
 				}
 			}
 		}
 	}
-
-	private void showTemporalQuantity(List<ICollection> res)
+	private void showTemporalQuantity(ICollection primary, List<ICollection> others)
 	{
-		Iterator<ICollection> iter = res.iterator();
+		Iterator<ICollection> iter = others.iterator();
 
 		// clear the graph
 		ISeries[] series = chart.getSeriesSet().getSeries();
@@ -231,6 +221,7 @@ public class DifferencePlotView extends CoreAnalysisView
 	protected boolean appliesToMe(List<ICollection> res,
 			CollectionComplianceTests tests)
 	{
+		tests.allEqualLengthOrSingleton(res);
 		return (tests.allQuantity(res) &&  tests.allEqualUnits(res));
 	}
 
@@ -239,5 +230,20 @@ public class DifferencePlotView extends CoreAnalysisView
 	{
 		return "Pending";
 	}
+
+	public void follow(String title, ICollection primary,
+			List<ICollection> others)
+	{
+		boolean allTemporal = (primary.isTemporal() && aTests.allTemporal(others));
+		if(allTemporal)
+		{
+			showTemporalQuantity(primary, others);
+		}
+		else
+		{
+			showQuantity(primary, others);
+		}
+	}
+		
 
 }
