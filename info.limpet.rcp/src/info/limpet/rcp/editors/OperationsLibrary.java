@@ -13,6 +13,7 @@ import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.rcp.analysis_view.AnalysisView;
 import info.limpet.rcp.data_frequency.DataFrequencyView;
+import info.limpet.rcp.operations.ShowInDifferenceView;
 import info.limpet.rcp.operations.ShowInNamedView;
 import info.limpet.rcp.time_frequency.TimeFrequencyView;
 import info.limpet.rcp.xy_plot.DifferencePlotView;
@@ -49,15 +50,7 @@ public class OperationsLibrary
 						&& getTests().allQuantity(selection);
 			}
 		});
-		analysis.add(new ShowInNamedView("Show in Difference View", DifferencePlotView.ID)
-		{
-			protected boolean appliesTo(List<ICollection> selection)
-			{
-				return getTests().nonEmpty(selection)
-						&& getTests().allQuantity(selection)
-						&& getTests().allEqualUnits(selection);				
-			}
-		});
+		analysis.add(new ShowInDifferenceView(DifferencePlotView.ID));
 		analysis.add(new ShowInNamedView("Show in Time Frequency View",
 				TimeFrequencyView.ID));
 		analysis.add(new ShowInNamedView("Show in Data Frequency View",
