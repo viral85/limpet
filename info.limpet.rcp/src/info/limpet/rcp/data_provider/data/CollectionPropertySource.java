@@ -70,7 +70,7 @@ public class CollectionPropertySource implements IPropertySource
 			final PropertyDescriptor descriptionDescriptor = new TextPropertyDescriptor(
 					PROPERTY_DESCRIPTION, "Description");
 			descriptionDescriptor.setCategory("Label");
-			
+
 			// see if we want to add a value editor
 			if (_collection.getCollection().size() == 1)
 			{
@@ -79,17 +79,18 @@ public class CollectionPropertySource implements IPropertySource
 				boolean found = false;
 
 				// does this have a range?
-				if(_collection.getCollection().isQuantity())
+				if (_collection.getCollection().isQuantity())
 				{
-					QuantityCollection<?> qC = (QuantityCollection<?>) _collection.getCollection();
+					QuantityCollection<?> qC = (QuantityCollection<?>) _collection
+							.getCollection();
 					QuantityRange<?> range = qC.getRange();
-					if(range != null)
+					if (range != null)
 					{
 						found = true;
-						
+
 						// ok - here we should create a descriptor for a control
 						// that uses a slider between a range of values
-						
+
 						// temporarily - just use a text descriptor
 						Number max = range.getMaximum().getValue();
 						Number min = range.getMinimum().getValue();
@@ -99,8 +100,8 @@ public class CollectionPropertySource implements IPropertySource
 						dList.add(valueDescriptor);
 					}
 				}
-				
-				if(!found)
+
+				if (!found)
 				{
 					// ok, just use a text editor
 					final PropertyDescriptor valueDescriptor = new TextPropertyDescriptor(
@@ -108,7 +109,7 @@ public class CollectionPropertySource implements IPropertySource
 					valueDescriptor.setCategory("Value");
 					dList.add(valueDescriptor);
 				}
-				
+
 				// see if the type has any units
 				if (first.getUnit() != null)
 				{
@@ -157,12 +158,9 @@ public class CollectionPropertySource implements IPropertySource
 			ICollection theColl = _collection.getCollection();
 			if (theColl instanceof IQuantityCollection<?>)
 			{
-				IQuantityCollection<?> qC = (IQuantityCollection<?>) theColl;
-				QuantityRange<?> range = qC.getRange();
-				
-				// ok - we have to create a composite object that includes both the 
+				// ok - we have to create a composite object that includes both the
 				// range and the current value - so it can be passed to the slider
-				
+
 				Quantity<?> first = getSingleton();
 				if (first != null)
 				{
@@ -228,7 +226,7 @@ public class CollectionPropertySource implements IPropertySource
 			{
 				IQuantityCollection<?> tt = (IQuantityCollection<?>) theColl;
 				tt.replaceSingleton(Double.parseDouble((String) value));
-				
+
 				// ok, fire changed!
 				tt.fireChanged();
 			}
@@ -239,12 +237,12 @@ public class CollectionPropertySource implements IPropertySource
 			if (theColl instanceof IQuantityCollection<?>)
 			{
 				IQuantityCollection<?> tt = (IQuantityCollection<?>) theColl;
-				
-				// ok, extract the new value from the input object. It's probably 
+
+				// ok, extract the new value from the input object. It's probably
 				// going to be a composite object that combines both range and value
-				
+
 				tt.replaceSingleton(Double.parseDouble((String) value));
-				
+
 				// ok, fire changed!
 				tt.fireChanged();
 			}
