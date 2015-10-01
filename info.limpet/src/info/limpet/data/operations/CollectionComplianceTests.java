@@ -285,4 +285,15 @@ public class CollectionComplianceTests
 
 		return allValid;
 	}
+
+	/** check there are at least the specified number of items in the selection
+	 * 
+	 * @param selection
+	 * @param num
+	 * @return
+	 */
+	public boolean atLeast(List<ICollection> selection, int num)
+	{
+		return selection.size() >= num;
+	}
 }
