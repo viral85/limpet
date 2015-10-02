@@ -19,6 +19,13 @@ import java.util.List;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Speed;
 
+import org.geotools.factory.Hints;
+import org.geotools.geometry.GeometryFactoryFinder;
+import org.geotools.referencing.GeodeticCalculator;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.geometry.primitive.Point;
+import org.opengis.geometry.primitive.PrimitiveFactory;
+
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.quantity.QuantityRange;
 import tec.units.ri.unit.Units;
@@ -38,6 +45,8 @@ public class SampleData
 	public static final String SPEED_EARLY = "Speed Two Time (earlier)";
 	public static final String RANGED_SPEED_SINGLETON = "Ranged Speed Singleton";
 	public static final String FLOATING_POINT_FACTOR = "Floating point factor";
+	public static final String TRACK_1 = "Track 1";
+	public static final String TRACK_2 = "Track 2";
 
 	public InMemoryStore getData(long count)
 	{
@@ -56,6 +65,10 @@ public class SampleData
 				SPEED_EARLY);
 		StockTypes.Temporal.Speed_MSec speed_irregular = new StockTypes.Temporal.Speed_MSec(
 				SPEED_IRREGULAR2);
+		StockTypes.Temporal.Locations track_1 = new StockTypes.Temporal.Locations(
+				TRACK_1);
+		StockTypes.Temporal.Locations track_2 = new StockTypes.Temporal.Locations(
+				TRACK_2);
 		StockTypes.NonTemporal.Length_M length1 = new StockTypes.NonTemporal.Length_M(
 				LENGTH_ONE);
 		StockTypes.NonTemporal.Length_M length2 = new StockTypes.NonTemporal.Length_M(
@@ -72,6 +85,14 @@ public class SampleData
 				TIME_INTERVALS);
 
 		long thisTime = 0;
+		
+		final Hints hints = new Hints( Hints.CRS, DefaultGeographicCRS.WGS84 );
+		final PrimitiveFactory factory = GeometryFactoryFinder.getPrimitiveFactory(hints);
+		final GeodeticCalculator calc = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
+		
+		final Point baseLocation1 = factory.createPoint(new double[]{-4d, 52d});
+		final Point baseLocation2 = factory.createPoint(new double[]{-4.2, 52d});
+		
 
 		for (int i = 1; i <= count; i++)
 		{
@@ -103,7 +124,23 @@ public class SampleData
 			length2.add((double) i % 5);
 			string1.add("item " + i);
 			string2.add("item " + (i % 3));
-			timeIntervals.add(thisTime, (4 + Math.sin(Math.toRadians(i) + 3.4 * Math.random())));
+			timeIntervals.add(thisTime,
+					(4 + Math.sin(Math.toRadians(i) + 3.4 * Math.random())));
+			
+      // mind, this is lon/lat
+	
+			// TODO: once we've got the build sorted, progress building location tracks
+//			calc.setStartingGeographicPoint(baseLocation1);
+//			calc.setDirection(Math.toDegrees(MathUtils.normalizeAngle2(leftEdge)),
+//					range);
+//			Point2D dest = calc.getDestinationGeographicPoint();
+//			coords[1] = new Coordinate(dest.getX(), dest.getY());
+//
+//			
+//      calc.setStartingGeographicPoint(baseLocation1); 
+//      calc.setDirection(90, 200); 
+//      Point2D dest = calc.getDestinationGeographicPoint(); 
+			
 		}
 
 		// add an extra item to speedSeries3
@@ -136,6 +173,8 @@ public class SampleData
 		list.add(singletonRange1);
 		list.add(singletonLength);
 		list.add(timeIntervals);
+		list.add(track_1);
+		list.add(track_2);
 
 		res.addAll(list);
 

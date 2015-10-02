@@ -1,9 +1,9 @@
 package info.limpet.data.impl.samples;
 
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
+import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
+import info.limpet.data.impl.TemporalQuantityCollection;
 
 import javax.measure.Unit;
 import javax.measure.quantity.Acceleration;
@@ -13,6 +13,8 @@ import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Speed;
 import javax.measure.quantity.Time;
+
+import org.opengis.geometry.primitive.Point;
 
 import tec.units.ri.unit.Units;
 
@@ -105,7 +107,7 @@ public class StockTypes
 		}
 
 		public static class Locations extends
-				TemporalObjectCollection<TmpLocationItem>
+				TemporalObjectCollection<Point>
 		{
 			public Locations(String name)
 			{
