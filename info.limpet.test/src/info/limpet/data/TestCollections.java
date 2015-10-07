@@ -352,11 +352,13 @@ public class TestCollections extends TestCase
 		
 		// lookup to find the correct type.  But, it shouldn't
 		// be a string, it should be a quantity class, I guess.
+		@SuppressWarnings("unused")
 		String quantityType = qTypes.get(dim.toString());
 		
 		// declare a collection of the correct type
 		// TODO: we need to replace Length with an attribute pulled out of
 		// our quantity types lookup
+		@SuppressWarnings({ "unused", "unchecked" })
 		IQuantityCollection<?> newColl = new QuantityCollection<Length>("name", (Unit<Length>) mps2);
 		
 	}
