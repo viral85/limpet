@@ -18,12 +18,15 @@ import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.measure.Measurable;
 import javax.measure.Measure;
+import javax.measure.quantity.Length;
 import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.Dimension;
 import javax.measure.unit.Unit;
 
 import junit.framework.TestCase;
@@ -331,5 +334,28 @@ public class TestCollections extends TestCase
 
 	}
 	
+	public void testUnitsManagement()
+	{
+		// try to determine some units
+		Unit<?> mps2 = Unit.valueOf("m/s"); // Compiler Warning.		
+		assertEquals("correct derived units", "m/s", mps2.toString());
 
+		// get the dimensions of the data
+		Dimension dim = mps2.getDimension();
+		assertEquals("correct dim", "[L]/[T]" , dim.toString());
+
+		// build up library of quantity types against dimension
+		HashMap <String, String> qTypes = new HashMap<String, String>();
+		qTypes.put("[L]/[T]", "Velocity");
+		qTypes.put("[L]/[T]/[T]", "Acceleration");
+		qTypes.put("[L]", "Length");
+		
+		// lookup to find the correct type. 
+		String quantityType = qTypes.get(dim.toString());
+		
+		// declare a collection of the correct type
+		IQuantityCollection<?> newColl = new QuantityCollection<Length>("name", (Unit<Length>) mps2);
+		
+	}
+	
 }
