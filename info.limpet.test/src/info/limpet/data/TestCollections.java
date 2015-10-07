@@ -350,10 +350,13 @@ public class TestCollections extends TestCase
 		qTypes.put("[L]/[T]/[T]", "Acceleration");
 		qTypes.put("[L]", "Length");
 		
-		// lookup to find the correct type. 
+		// lookup to find the correct type.  But, it shouldn't
+		// be a string, it should be a quantity class, I guess.
 		String quantityType = qTypes.get(dim.toString());
 		
 		// declare a collection of the correct type
+		// TODO: we need to replace Length with an attribute pulled out of
+		// our quantity types lookup
 		IQuantityCollection<?> newColl = new QuantityCollection<Length>("name", (Unit<Length>) mps2);
 		
 	}
