@@ -137,6 +137,7 @@ public class SubtractQuantityOperation<Q extends Quantity> extends CoreQuantityO
 			if (otherValue != null)
 				otherD = otherValue.doubleValue(_item1.getUnits());
 			return thisD - otherD;
+			
 		}
 	}
 }
